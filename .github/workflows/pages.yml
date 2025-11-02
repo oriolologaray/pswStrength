@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "**" ]
   workflow_dispatch:
 
 permissions:
@@ -51,6 +51,11 @@ jobs:
           BASE_PATH: ${{ steps.base.outputs.base }}
         run: npm run build
 
+      - name: Add 404 fallback for SPA
+        working-directory: frontend
+        run: |
+          cp dist/index.html dist/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -66,4 +71,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
