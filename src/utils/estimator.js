@@ -138,36 +138,52 @@ export function suggestImprovements(pw, { count = 3 } = {}) {
 export function buildGuidance(pw, result, pwned) {
   const issues = []
   const actions = []
+  const issueCodes = []
+  const actionCodes = []
+  const extras = []
 
-  if (!pw) return { issues, actions }
+  if (!pw) return { issues, actions, issueCodes, actionCodes, extras }
 
   if (pw.length < MIN_RECOMMENDED_LENGTH) {
     issues.push(`Too short (${pw.length} chars)`)
+    issueCodes.push({ code: 'too_short', length: pw.length })
     actions.push(`Increase length to at least ${MIN_RECOMMENDED_LENGTH} characters.`)
+    actionCodes.push({ code: 'increase_length', min: MIN_RECOMMENDED_LENGTH })
   }
 
   const setCount = [result.sets.lower, result.sets.upper, result.sets.digits, result.sets.symbols].filter(Boolean).length
   if (setCount < 2 && pw.length < 20) {
     issues.push('Low character variety')
+    issueCodes.push({ code: 'low_variety' })
     actions.push('Mix upper/lower, digits, and symbols or use a longer passphrase.')
+    actionCodes.push({ code: 'mix_types' })
   }
 
   if (result.feedback && result.feedback.length) {
     for (const msg of result.feedback) {
-      if (msg && !issues.includes(msg)) issues.push(msg)
+      if (msg && !extras.includes(msg)) extras.push(msg)
     }
   }
 
   if (pwned?.pwned) {
     issues.push('Appears in public breach lists')
+    issueCodes.push({ code: 'breached' })
     actions.push('Do not reuse breached passwords; create a unique replacement.')
+    actionCodes.push({ code: 'no_reuse_breached' })
   }
 
   if (result.score <= 1) {
     actions.push('Add unpredictability: avoid common words, sequences, and years.')
+    actionCodes.push({ code: 'add_unpredictability' })
   }
 
   // De-duplicate and cap to keep UI concise
   const dedup = (arr) => Array.from(new Set(arr)).slice(0, 3)
-  return { issues: dedup(issues), actions: dedup(actions) }
+  return {
+    issues: dedup(issues),
+    actions: dedup(actions),
+    issueCodes: dedup(issueCodes),
+    actionCodes: dedup(actionCodes),
+    extras: dedup(extras),
+  }
 }

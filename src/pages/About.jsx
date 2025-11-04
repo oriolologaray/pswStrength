@@ -1,28 +1,25 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function About() {
+  const { t } = useTranslation()
   return (
     <div className="container about">
       <div className="toolbar">
-        <h1>How We Estimate Strength</h1>
-        <Link className="about-link" to="/">Back</Link>
+        <h1>{t('about_title')}</h1>
+        <Link className="about-link" to="/">{t('back')}</Link>
       </div>
       <p>
-        We use the open‑source zxcvbn library to estimate how many guesses an attacker
-        might need to crack a password. It looks for patterns attackers try first
-        (like common words, names, keyboard sequences, or years) and then estimates
-        the size of the remaining search space.
+        {t('about_p1')}
       </p>
       <ul>
-        <li>Longer is better. Aim for at least 12–14 characters.</li>
-        <li>Unpredictable beats complex rules. Avoid common words, sequences, and dates.</li>
-        <li>Each site should get a unique password. Use a password manager.</li>
-        <li>Enable multi‑factor authentication for important accounts.</li>
+        <li>{t('about_list_1')}</li>
+        <li>{t('about_list_2')}</li>
+        <li>{t('about_list_3')}</li>
+        <li>{t('about_list_4')}</li>
       </ul>
       <p>
-        We optionally check if your password appears in known breach corpora using the
-        Have I Been Pwned k‑anonymity API. Your password never leaves your device; only
-        the first five characters of a SHA‑1 hash are sent to the API to look up matches.
+        {t('about_p2')}
       </p>
       <p style={{opacity:.85}}>
         Learn more:
